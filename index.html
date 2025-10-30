@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EL-ROWAD – بلاغات الأعطال</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root {
+      --navy: #0f172a;
+      --slate: #334155;
+      --slate-light: #64748b;
+      --gold: #d4af37;
+      --success: #10b981;
+      --error: #ef4444;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tajawal', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--slate);
+      line-height: 1.6;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--navy);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .logo i {
+      color: var(--gold);
+    }
+
+    .subtitle {
+      margin-top: 12px;
+      color: var(--slate-light);
+      font-weight: 400;
+      font-size: 17px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 36px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group label.required::after {
+      content: "•";
+      color: var(--error);
+      font-size: 24px;
+      line-height: 1;
+      position: relative;
+      top: 2px;
+    }
+
+    .input-icon {
+      position: relative;
+    }
+
+    .input-icon i {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-light);
+      pointer-events: none;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 14px 44px 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: 'Tajawal', sans-serif;
+      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.15);
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      letter-spacing: 0.4px;
+    }
+
+    .btn:hover {
+      background: #0c1324;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    #status {
+      margin-top: 28px;
+      padding: 16px;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+
+    #status.success {
+      display: block;
+      background: #f0fdf4;
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+
+    #status.error {
+      display: block;
+      background: #fef2f2;
+      color: var(--error);
+      border: 1px solid #fecaca;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--slate-light);
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    @media (max-width: 650px) {
+      .card {
+        padding: 24px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      input, textarea {
+        font-size: 17px; /* Prevents iOS zoom */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-bolt"></i>
+        EL-ROWAD
+      </div>
+      <p class="subtitle">نظام بلاغات الأعطال – مخصص لسكرتارية المكتب فقط</p>
+    </div>
+
+    <div class="card">
+      <form id="fault-report-form">
+        <div class="form-grid">
+          <!-- Row 1 -->
+          <div class="form-group">
+            <label for="clientName">اسم العميل</label>
+            <div class="input-icon">
+              <input type="text" id="clientName" name="clientName" placeholder="اختياري" />
+              <i class="fas fa-user"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="clientPhone" class="required">رقم العميل</label>
+            <div class="input-icon">
+              <input type="tel" id="clientPhone" name="clientPhone" placeholder="05XXXXXXXX" required />
+              <i class="fas fa-phone"></i>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="faultType" class="required">وصف العطل</label>
+            <textarea id="faultType" name="faultType" placeholder="صف العطل بدقة: ماذا يحدث؟ متى بدأ؟ هل هناك أصوات/أعطال مرئية؟" required></textarea>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="form-group">
+            <label for="location" class="required">المكان</label>
+            <div class="input-icon">
+              <input type="text" id="location" name="location" placeholder="القسم / الغرفة / العنوان الكامل" required />
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="machineNumber">رقم الآلة</label>
+            <div class="input-icon">
+              <input type="text" id="machineNumber" name="machineNumber" placeholder="اختياري" />
+              <i class="fas fa-microchip"></i>
+            </div>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="form-group">
+            <label for="serialNumber">الرقم التسلسلي</label>
+            <div class="input-icon">
+              <input type="text" id="serialNumber" name="serialNumber" placeholder="اختياري" />
+              <i class="fas fa-hashtag"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reportReceivedDate">تاريخ وصول البلاغ للمكتب</label>
+            <div class="input-icon">
+              <input type="text" id="reportReceivedDate" name="reportReceivedDate" placeholder="مثال: 30/10/2025" />
+              <i class="fas fa-calendar-day"></i>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn" id="submit-btn">
+          <i class="fas fa-paper-plane"></i> إرسال البلاغ فورًا إلى المهندس
+        </button>
+
+        <div id="status"></div>
+
+        <p class="footer-note">
+          ⏱️ <strong>ملاحظة:</strong> تاريخ الإرسال يُسجَّل تلقائيًا من جهازك عند الضغط على الزر.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ === CONFIGURE THESE === ⚠️
+    const SERVICE_ID = 'service_z9stgjs';
+    const TEMPLATE_ID = 'template_2n1qy8o';
+    const PUBLIC_KEY = 'obESY10b5dJiRJRz6';
+    // ⚠️ ======================== ⚠️
+
+    emailjs.init(PUBLIC_KEY);
+
+    document.getElementById('fault-report-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('submit-btn');
+      const status = document.getElementById('status');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+      status.style.display = 'none';
+
+      // Auto timestamp from secretary's device
+      const now = new Date();
+      const sendDate = now.toLocaleDateString('ar-EG', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+
+      const params = {
+        clientName: document.getElementById('clientName').value || '—',
+        clientPhone: document.getElementById('clientPhone').value,
+        faultType: document.getElementById('faultType').value,
+        location: document.getElementById('location').value,
+        machineNumber: document.getElementById('machineNumber').value || '—',
+        serialNumber: document.getElementById('serialNumber').value || '—',
+        reportReceivedDate: document.getElementById('reportReceivedDate').value || '—',
+        sendDate: sendDate
+      };
+
+      emailjs.send(SERVICE_ID, TEMPLATE_ID, params)
+        .then(() => {
+          status.textContent = '✅ تم إرسال بلاغ العطل بنجاح! المهندس سيتلقى التفاصيل فورًا.';
+          status.className = 'success';
+          document.getElementById('fault-report-form').reset();
+        })
+        .catch(() => {
+          status.textContent = '❌ عذرًا، فشل الإرسال. تحقق من الاتصال وحاول مجددًا.';
+          status.className = 'error';
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال البلاغ فورًا إلى المهندس';
+        });
+    });
+  </script>
+
+</body>
+</html>
